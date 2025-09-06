@@ -1,5 +1,5 @@
 const winston = require("winston");
-require("express-async-errors");
+// require("express-async-errors");
 
 // INFO:  the best parctes is to exst(1) or end the process and restarted with clean state
 module.exports = function () {
