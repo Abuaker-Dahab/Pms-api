@@ -12,7 +12,7 @@ const error = require("./middleware/error")
 const app = express();
 app.use(express.json());
 app.use("/images", express.static(path.join(__dirname, "images")));
-
+require('./middleware/logging')()
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/users", users);
