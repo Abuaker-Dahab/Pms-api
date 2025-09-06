@@ -3,6 +3,7 @@ const express = require("express")
 const mongoose = require("mongoose")
 const auth =require("./routes/auth")
 const users = require("./routes/users")
+const tasks = require("./routes/tasks")
 const projects = require("./routes/projects")
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/users", users);
+app.use("/api/v1/tasks", tasks);
 app.use("/api/v1/projects", projects);
 
 const db = process.env.DB;
