@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 const express = require("express")
 const mongoose = require("mongoose")
 const auth =require("./routes/auth")
@@ -6,15 +7,19 @@ const users = require("./routes/users")
 const teams = require("./routes/teams") 
 const tasks = require("./routes/tasks") 
 const projects = require("./routes/projects")
+const error = require("./middleware/error")
 
 const app = express();
 app.use(express.json());
+app.use("/images", express.static(path.join(__dirname, "images")));
+
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/users", users);
 app.use("/api/v1/teams", teams);
 app.use("/api/v1/tasks", tasks);
 app.use("/api/v1/projects", projects);
+app.use(error);
 
 const db = process.env.DB;
 mongoose

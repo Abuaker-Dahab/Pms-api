@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+const { projectSchema } = require("./project");
+const { teamSchema } = require("./team");
+const { taskSchema } = require("./task");
 
 const userSchema = new mongoose.Schema(
   {
@@ -37,6 +40,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.pre("remove", function (next) {
+  projectSchema.remove({ user: this._id }).exec();
+  taskSchema.remove({ user: this._id }).exec();
+  teamSchema.remove({ user: this._id }).exec();
+  next();
+});
 
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
