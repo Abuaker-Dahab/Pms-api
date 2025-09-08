@@ -15,8 +15,8 @@ router.get("/", auth, async (req, res) => {
   if (req.user.role == "admin") {
     projects = await Project.find()
       .populate("user", "-role")
-      .populate("projectTasks.task")
-      .populate("projectTeam.member", "-role")
+      .populate("projectTasks")
+      .populate("projectTeam", "-role -password ")
       .select("-__v");
     return res.send(projects);
   }
@@ -24,8 +24,8 @@ router.get("/", auth, async (req, res) => {
   // INFO: User will their owen Project manager
   projects = await Project.find({ user: req.user._id })
     .populate("user", "name profileImage")
-    .populate("projectTasks.task")
-    .populate("projectTeam.member", "_id name profileImage")
+    .populate("projectTasks")
+    .populate("projectTeam", "_id name profileImage")
     .select("-__v")
     .exec();
 
@@ -113,7 +113,8 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
   const project = await Project.findById(req.params.id)
     .populate("projectTasks.task")
     .populate("user", "name profileImage")
-    .populate("projectTeam.member", "_id name profileImage");
+    .populate("projectTasks")
+    .populate("projectTeam", "-role -password ");
 
   if (!project)
     return res.status(404).send(" The project with given ID was not found.");

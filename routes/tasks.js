@@ -11,12 +11,15 @@ router.get("/", auth, async (req, res) => {
   let tasks;
   // INFO: admin will get all tasks
   if (req.user.role === "admin") {
-    tasks = await Task.find().populate("user").select("-__v");
+    tasks = await Task.find()
+    .populate("user")
+    .populate("assignee").select("-__v");
     res.send(tasks);
   } else {
     // INFO: User will get their Owne task
     tasks = await Task.find({ user: req.user._id })
       .populate("user", "_id name profileImage")
+      .populate("assignee", "name profileImage job")
       .select("-__v");
 
     res.send(tasks);
@@ -120,10 +123,9 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
   )
     return res.status(405).send("Method not allowed.");
 
-  const task = await Task.findById(req.params.id).populate(
-    "user",
-    "name profileImage"
-  );
+  const task = await Task.findById(req.params.id)
+    .populate("user", "name profileImage")
+    .populate("assignee", "name profileImage job");
   if (!task)
     return res.status(404).send("The task with given ID was not found.");
 

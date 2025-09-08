@@ -11,7 +11,7 @@ router.get("/", auth, async (req, res) => {
   if (req.user.role === "admin") {
     teams = await Team.find()
       .populate("user", "_id name email profileImage")
-      .populate("teamMembers")
+      .populate("teamMembers", "-password")
       .select("-__v");
     return res.send(teams);
   }
@@ -103,7 +103,7 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
 
   await Team.findById(req.params.id)
     .populate("user", "name profileImage email")
-    .populate("teamMembers.member", "name profileImage email job");
+    .populate("teamMembers", "name profileImage email job");
 
   res.send(team);
 });

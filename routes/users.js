@@ -9,10 +9,14 @@ const router = express.Router();
 
 // NOTE:  Get all users
 router.get("/", auth, async (req, res) => {
-  if (req.user !== "admin" && req.user !== "super-admin")
-    return res.status(401).send("Access denied.");
+  let users;
+  if (req.user === "admin" || req.user === "super-admin") {
+    const users = await User.find();
+    res.send(users);
+  }
 
-  const users = await User.find();
+  // to show users with limited info to normal users
+  users = await User.find().select("_id name email profileImage");
   res.send(users);
 });
 

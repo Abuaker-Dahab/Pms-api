@@ -33,6 +33,9 @@ app.use(cors());
 app.use(helmet());
 app.use(compression());
 
+app.get("/", (req, res) => {
+  res.send("Hello world....");
+});
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/users", users);
 app.use("/api/v1/teams", teams);
