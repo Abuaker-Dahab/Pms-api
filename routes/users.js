@@ -9,7 +9,7 @@ const router = express.Router();
 
 // NOTE:  Get all users
 router.get("/", auth, async (req, res) => {
-  if (req.user !== "admin" || req.user !== "super-admin")
+  if (req.user !== "admin" && req.user !== "super-admin")
     return res.status(401).send("Access denied.");
 
   const users = await User.find();
@@ -18,7 +18,7 @@ router.get("/", auth, async (req, res) => {
 
 // NOTE:  Get one user by ID
 router.get("/:id", [auth, validateObjectId], async (req, res) => {
-  if (req.user !== "admin" || req.user !== "super-admin")
+  if (req.user !== "admin" && req.user !== "super-admin")
     return res.status(401).send("Access denied.");
 
   const user = await User.findById(req.params.id);
@@ -57,7 +57,7 @@ router.patch(
 
     // INFO: The Owner or Admin can Update
     if (
-      req.user._id.toString() === req.params.id.toString() ||
+      req.user._id.toString() === req.params.id.toString() &&
       req.user.role === "admin"
     ) {
       user = await User.findByIdAndUpdate(

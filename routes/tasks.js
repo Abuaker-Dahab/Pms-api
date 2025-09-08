@@ -33,8 +33,6 @@ router.post("/", auth, async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  const project = await Project.findById(req.params.projectId);
-
   const task = new Task({
     title: req.body.title,
     projectId: req.body.projectId,
@@ -48,8 +46,10 @@ router.post("/", auth, async (req, res) => {
     releaseDate: req.body.releaseDate,
   });
 
+  const project = await Project.findById(req.body.projectId);
+
   try {
-    project.projectTasks.push({ task: task._id });
+    project.projectTasks.push(task._id);
     await task.save(session);
     await project.save(session);
 
@@ -64,14 +64,14 @@ router.post("/", auth, async (req, res) => {
 
 // NOTE: update task
 router.patch("/:id", [auth, validateObjectId], async (req, res) => {
+  let task = await Task.findById(req.params.id);
   // INFO: the owner, admin can update the task
   if (
-    req.user._id.toString() != task.user._id.toString() ||
+    req.user._id.toString() != task.user._id.toString() &&
     req.user.isAdmin === "admin"
   )
     return res.status(405).send("Method not allowed.");
 
-  let task = await Task.findById(req.params.id);
   if (!task)
     return res.status(404).send(" The task with given ID was not found.");
 
@@ -83,7 +83,7 @@ router.patch("/:id", [auth, validateObjectId], async (req, res) => {
     {
       title: req.body.title,
       description: req.body.description,
-      asssignee: req.body.asssignee,
+      assignee: req.body.assignee,
       status: req.body.status,
       priority: req.body.priority,
       startDate: req.body.startDate,
@@ -99,7 +99,7 @@ router.patch("/:id", [auth, validateObjectId], async (req, res) => {
 router.delete("/:id", [auth, validateObjectId], async (req, res) => {
   // INFO: the owner, admin can delete task
   if (
-    req.user._id.toString() !== task.user._id.toString() ||
+    req.user._id.toString() !== task.user._id.toString() &&
     req.user.role === "admin"
   )
     return res.status(405).send("Method not allowed.");
@@ -115,7 +115,7 @@ router.delete("/:id", [auth, validateObjectId], async (req, res) => {
 router.get("/:id", auth, validateObjectId, async (req, res) => {
   // INFO: the owner, admin or project manager can get task details
   if (
-    req.user._id.toString() !== task.user._id.toString() ||
+    req.user._id.toString() !== task.user._id.toString() &&
     req.user.role === "admin"
   )
     return res.status(405).send("Method not allowed.");

@@ -29,7 +29,7 @@ app.use(
   })
 );
 app.use(cors());
-app.use(xss());
+// app.use(xss());
 app.use(helmet());
 app.use(compression());
 

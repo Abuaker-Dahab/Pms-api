@@ -62,7 +62,7 @@ router.patch("/:id", [auth, validateObjectId], async (req, res) => {
 
   // INFO: the owner or admin or project manager can update the project
   if (
-    req.user._id.toString() !== project.user._id.toString() ||
+    req.user._id.toString() !== project.user._id.toString() &&
     req.user.isAdmin !== "admin"
   )
     return res.status(405).send("Method not allowed.");
@@ -98,7 +98,7 @@ router.delete("/:id", [auth, validateObjectId], async (req, res) => {
 
   // INFO: the Owner or Admin can delete the project
   if (
-    req.user._id.toString() !== project.user._id.toString() ||
+    req.user._id.toString() !== project.user._id.toString() &&
     req.user.role !== "admin"
   )
     return res.status(405).send("Method not allowed.");
@@ -119,7 +119,7 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
     return res.status(404).send(" The project with given ID was not found.");
   // INFO: the Owner or Admin Can get project details
   if (
-    req.user._id.toString() !== project.user._id.toString() ||
+    req.user._id.toString() !== project.user._id.toString() &&
     req.user.role !== "admin"
   )
     return res.status(405).send("Method not allowed.");

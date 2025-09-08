@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 4,
-      maxlength: 10,
+      maxlength: 20,
     },
     profileImage: {
       type: String,
@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       maxlength: 1024,
     },
+    phone: {
+      type: String,
+      unique: true,
+    },
+    address: { type: String },
+    campany: { type: String },
+    bio: { type: String },
+    job: { type: String },
     roll: {
       type: String,
       enum: ["user", "admin", "super-admin"],
@@ -63,7 +71,7 @@ userSchema.methods.generateAuthToken = function () {
 
 function validateRegister(user) {
   const schema = Joi.object({
-    name: Joi.string().min(4).max(10).required(),
+    name: Joi.string().min(4).max(20).required(),
     email: Joi.string().min(8).max(255).required().email(),
     password: Joi.string().min(6).max(255).required(),
   });
@@ -82,7 +90,7 @@ function validateLogin(user) {
 function validateUser(user) {
   const schema = Joi.object({
     profileImage: Joi.string().allow(""),
-    name: Joi.string().min(4).max(10),
+    name: Joi.string().min(4).max(20),
     password: Joi.string().min(6).max(255),
     role: Joi.string(),
   });

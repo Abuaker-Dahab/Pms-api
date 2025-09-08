@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+Joi.objectId = require('joi-objectid')(Joi);
 const { taskSchema } = require("./task");
 
 const Schema = mongoose.Schema;
@@ -26,12 +27,9 @@ const projectSchema = new Schema(
       required: true,
     },
     projectTasks: [
-      {
-        task: { type: Schema.Types.ObjectId, ref: "Task" },
-      },
-    ],
-    projectTasks: [
-    ],
+       { type: Schema.Types.ObjectId, ref: "Task" },
+      ],
+      default: [],
   },
   { timestamps: true }
 );
@@ -50,7 +48,7 @@ function validateProject(project) {
     releaseDate: Joi.date(),
     title: Joi.string().min(5).max(50).required(),
     description: Joi.string().min(5).max(50),
-    projectTeam: Joi.array().items(Joi.object(Joi.string())),
+    projectTeam: Joi.array().items(Joi.string()),
   });
 
   return schema.validate(project);
@@ -65,7 +63,7 @@ function validateUpdateProject(project) {
     releaseDate: Joi.date(),
     title: Joi.string().min(5).max(50),
     description: Joi.string().min(5).max(50),
-    projectTeam: Joi.array().items(Joi.object(Joi.string())),
+    projectTeam: Joi.array().items(Joi.string()),
   });
 
   return schema.validate(project);

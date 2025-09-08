@@ -1,4 +1,4 @@
-const { Team, validateTeam } = require("../models/team");
+const { Team, validateTeam , validateUpdateTeam} = require("../models/team");
 const auth = require("../middleware/auth");
 const validateObjectId = require("../middleware/validateObjectId");
 const express = require("express");
@@ -26,7 +26,6 @@ router.get("/", auth, async (req, res) => {
 
 // NOTE: add new team member
 router.post("/", auth, async (req, res) => {
-  req.body.user = req.user._id;
   // INFO:  validate data send by user
   const { error } = validateTeam(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -49,7 +48,7 @@ router.patch("/:id", [auth, validateObjectId], async (req, res) => {
   if (!team)
     return res.status(404).send(" The team with given ID was not found.");
 
-  const { error } = validateTeam(req.body);
+  const { error } = validateUpdateTeam(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   // INFO: remove duplicate members
@@ -79,7 +78,7 @@ router.delete("/:id", [auth, validateObjectId], async (req, res) => {
 
   // INFO: the Owner or Admin Can get team details
   if (
-    req.user._id.toString() !== team.user._id.toString() ||
+    req.user._id.toString() !== team.user._id.toString() &&
     req.user.role !== "admin"
   )
     return res.status(405).send("Method not allowed.");
@@ -97,7 +96,7 @@ router.get("/:id", auth, validateObjectId, async (req, res) => {
 
   // INFO: the Owner or Admin Can get team details
   if (
-    req.user._id.toString() !== team.user._id.toString() ||
+    req.user._id.toString() !== team.user._id.toString() &&
     req.user.role !== "admin"
   )
     return res.status(405).send("Method not allowed.");

@@ -9,6 +9,7 @@ const teamSchema = new Schema(
       type: String,
       required: true,
     },
+    tools: {type: String},
     teamMembers: [ {type: Schema.Types.ObjectId, ref: "User"} ],
     user: {
       type: Schema.Types.ObjectId,
@@ -26,7 +27,16 @@ function validateTeam(team) {
 
   return schema.validate(team);
 }
+function validateUpdateTeam(team) {
+  const schema = Joi.object({
+    title: Joi.string(),
+    teamMembers: Joi.array().items(Joi.string()),
+  });
+
+  return schema.validate(team);
+}
 
 module.exports.Team = mongoose.model("Team", teamSchema);
 module.exports.validateTeam = validateTeam;
+module.exports.validateUpdateTeam = validateUpdateTeam;
 module.exports.teamSchema = teamSchema;
