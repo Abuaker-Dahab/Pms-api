@@ -16,6 +16,7 @@ router.get("/", auth, async (req, res) => {
     projects = await Project.find()
       .populate("user", "-role")
       .populate("projectTasks")
+      .populate("projectManager", "_id name profileImage email jobTitle")
       .populate("projectTeam", "-role -password ")
       .select("-__v");
     return res.send(projects);
@@ -23,8 +24,9 @@ router.get("/", auth, async (req, res) => {
 
   // INFO: User will their owen Project manager
   projects = await Project.find({ user: req.user._id })
-    .populate("user", "name profileImage")
+    .populate("user", "name profileImage email")
     .populate("projectTasks")
+    .populate("projectManager", "_id name profileImage email jobTitle")
     .populate("projectTeam", "_id name profileImage")
     .select("-__v")
     .exec();
@@ -111,9 +113,10 @@ router.delete("/:id", [auth, validateObjectId], async (req, res) => {
 // NOTE: get one project route
 router.get("/:id", auth, validateObjectId, async (req, res) => {
   const project = await Project.findById(req.params.id)
-    .populate("projectTasks.task")
-    .populate("user", "name profileImage")
     .populate("projectTasks")
+    .populate("user", "name profileImage email")
+    .populate("projectTasks")
+    .populate("projectManager", "name profileImage email")
     .populate("projectTeam", "-role -password ");
 
   if (!project)
